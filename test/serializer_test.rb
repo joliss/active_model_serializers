@@ -566,7 +566,7 @@ class SerializerTest < ActiveModel::TestCase
 
   def test_associations_with_as
     posts = [
-      Post.new(:title => 'First Post', :body => 'text'), 
+      Post.new(:title => 'First Post', :body => 'text'),
       Post.new(:title => 'Second Post', :body => 'text')
     ]
     user = User.new
@@ -584,15 +584,15 @@ class SerializerTest < ActiveModel::TestCase
           {:title => 'Second Post', :body => 'text', :comments => []}
         ],
         :user => {
-          :first_name => "Jose", 
-          :last_name => "Valim", :ok => true, 
+          :first_name => "Jose",
+          :last_name => "Valim", :ok => true,
           :scope => true
         }
       }
     }, serializer.as_json)
   end
 
-  def test_implicity_detection_for_association_serializers 
+  def test_implicity_detection_for_association_serializers
     implicit_serializer = Class.new(ActiveModel::Serializer) do
       root :custom_blog
       const_set(:UserSerializer, UserSerializer)
@@ -603,7 +603,7 @@ class SerializerTest < ActiveModel::TestCase
     end
 
     posts = [
-      Post.new(:title => 'First Post', :body => 'text', :comments => []), 
+      Post.new(:title => 'First Post', :body => 'text', :comments => []),
       Post.new(:title => 'Second Post', :body => 'text', :comments => [])
     ]
     user = User.new
@@ -621,8 +621,8 @@ class SerializerTest < ActiveModel::TestCase
           {:title => 'Second Post', :body => 'text', :comments => []}
         ],
         :user => {
-          :first_name => "Jose", 
-          :last_name => "Valim", :ok => true, 
+          :first_name => "Jose",
+          :last_name => "Valim", :ok => true,
           :scope => true
         }
       }
@@ -676,13 +676,16 @@ class SerializerTest < ActiveModel::TestCase
         define_method(:model_class) do model end
       end
 
-      attributes :name, :age
+      # Computed attribute; not a column.
+      def can_edit; end
+
+      attributes :name, :age, :can_edit
       has_many :posts, :serializer => Class.new
       has_one :parent, :serializer => Class.new
     end
 
     assert_equal serializer.schema, {
-      :attributes => { :name => :string, :age => :integer },
+      :attributes => { :name => :string, :age => :integer, :can_edit => nil },
       :associations => {
         :posts => { :has_many => :posts },
         :parent => { :belongs_to => :parent }
@@ -860,7 +863,7 @@ class SerializerTest < ActiveModel::TestCase
     expected = serializer_class.new(post).as_json
     assert_equal expected, hash_object
   end
-  
+
   def test_embed_ids_include_true_with_root
     serializer_class = post_serializer
 
@@ -909,7 +912,7 @@ class SerializerTest < ActiveModel::TestCase
     :author => [{ :first_name => "Jose", :last_name => "Valim" }]
     }, serializer.as_json)
   end
-  
+
   # the point of this test is to illustrate that deeply nested serializers
   # still side-load at the root.
   def test_embed_with_include_inserts_at_root
@@ -1121,7 +1124,7 @@ class SerializerTest < ActiveModel::TestCase
     actual = attachment_serializer.new(attachment, {}).as_json
 
     assert_equal({
-      :name => 'logo.png', 
+      :name => 'logo.png',
       :url => 'http://example.com/logo.png',
       :attachable => {
         :type => :email,
@@ -1158,7 +1161,7 @@ class SerializerTest < ActiveModel::TestCase
     actual = attachment_serializer.new(attachment, {}).as_json
 
     assert_equal({
-      :name => 'logo.png', 
+      :name => 'logo.png',
       :url => 'http://example.com/logo.png',
       :attachable => {
         :type => :email,
@@ -1197,7 +1200,7 @@ class SerializerTest < ActiveModel::TestCase
 
     assert_equal({
       :attachment => {
-        :name => 'logo.png', 
+        :name => 'logo.png',
         :url => 'http://example.com/logo.png',
         :attachable => {
           :type => :email, 
